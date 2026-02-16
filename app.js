@@ -103,6 +103,14 @@ listaArticulos3.addEventListener('click', (e) => {
     hacerLike(card);
 });
 
+listaArticulos3.addEventListener('click', (e) => {
+    const btn = e.target.closest('button[data-action="remove"]');
+    if (!btn) return;
+    const card = btn.closest('.card');
+    if (!card) return;
+    btneliminar(card);
+});
+
 // likeButtons.forEach(btn => {
 //     btn.addEventListener('click', () => {
 //         const card = btn.closest('.card');
@@ -115,4 +123,11 @@ const hacerLike = (card) => {
         const currentLikes = Number(badge.textContent) || 0;
         badge.textContent = currentLikes + 1;
         setEstado('Like agregado');
+};
+
+const btneliminar = (card) => {
+    const badge = card.querySelector('.badge');
+        const currentLikes = Number(badge.textContent) || 0;
+        badge.textContent = currentLikes > 0 ? currentLikes -1 : 0;
+        setEstado('Like eliminado');
 };
