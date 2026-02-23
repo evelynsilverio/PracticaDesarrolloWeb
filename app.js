@@ -166,7 +166,7 @@ const applyFilters = () => {
     if (filterState.tag) parts.push(`Tag: "${filterState.tag}"`);
     setEstado(parts.length
         ? `Filtros aplicados (${parts.join(',')})`
-        : `Filtro vacío`);
+        : 'Filtro vacío');
 };
 
 // Evento input: filtrar mientras se escribe en la caja de texto
@@ -197,4 +197,31 @@ chips.addEventListener('click', (e) => {
         card.hidden = !tags.includes(tag);
     });
     setEstado(`Filtro por tag: "${tag}"`)
+});
+
+//Validar el formulario
+const form = $('#formNewsletter');
+const email = $('#email');
+const interes = $('#interes');
+const feedback = $('#feedback');
+
+// Validar el email con una expresión regular simple
+const isValidEmail = (value) => /^[^\s@]+@+[^\s@]+\.[^\s@]+$/.test(value);
+
+form.addEventListener('submit', (e) => {
+    //Evitar el envío de formulario
+    e.preventDefault();
+    const valueEmail = email.value.trim();
+    const valueInteres = interes.value.trim();
+
+    email.classList.remove('is-invalid');
+    interes.classList.remove('is-invalid');
+    feedback.textContent= '';
+
+    let ok = true;
+
+    if (!isValidEmail(valueEmail)){
+        email.classList.add('is-invalid');
+        ok = false;
+    }
 });
