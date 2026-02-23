@@ -131,3 +131,70 @@ const btneliminar = (card) => {
         badge.textContent = currentLikes > 0 ? currentLikes -1 : 0;
         setEstado('Like eliminado');
 };
+
+// Filtrar cards
+const filtro = $('#filtro');
+
+const filterState = {q: '', tag: ''};
+
+// Unir título y texto de cada card
+// Y va a buscar lo que el usuario escribió en el filtro
+
+
+const matchText = (card, q) => {
+    const title = card.querySelector('.card-title')?.textContent ?? '';
+    const text = card.querySelector('.card-text')?.textContent ?? '';
+    const haystack = (title + ' ' + text).toLowerCase();
+    return haystack.includes(q);
+};
+
+const matchTag = (card, tag) => {
+    if (!tag) return true; //Si no hay tags, coinciden todas las cards
+    const tags = (card.dataset.tags || '').toLowerCase();
+    return tags.includes(tag.toLowerCase());
+};
+
+const applyFilters = () => {
+    const cards = $$('#listaArticulos .card');
+    cards.forEach((card) => {
+        const okText= filterState.q ? matchText(card, filterState.q) : true;
+        const okTag = matchTag(card.filterState.tag);
+        card.hidden = !(okText && okTag);
+    });
+    const parts = [];
+    if (filterState.q) parts.push(`Texto: "${filterState.q}"`);
+    if (filterState.tag) parts.push(`Tag: "${filterState.tag}"`);
+    setEstado(parts.length
+        ? `Filtros aplicados (${parts.join(',')})`
+        : `Filtro vacío`);
+};
+
+// Evento input: filtrar mientras se escribe en la caja de texto
+filtro.addEventListener('input', ()=>{
+    // q: lo que el usuario escribe en el input
+    const q = filtro.value.trim().toLowerCase();
+    const cards = $$('#listaArticulos .card');
+
+    cards.forEach((card) => {
+        const ok = q === '' ? true : matchText(card, q);
+        card.hidden = !ok;
+    });
+
+    setEstado( q === '' ? 'Filtro vacío' : `Filtro texto: "${q}"`);
+});
+
+// Filtar por tags
+const chips = $('#chips');
+chips.addEventListener('click', (e) => {
+    const chip = e.target.closest('.chip');
+    if (!chip) return; //No se hizo clic en una chip, salir
+
+    const tag = (chip.dataset.tag || '').toLowerCase();
+    const cards = $$('#listaArticulos .card');
+
+    cards.forEach((card) => {
+        const tags = (card.dataset.tags || '').toLowerCase();
+        card.hidden = !tags.includes(tag);
+    });
+    setEstado(`Filtro por tag: "${tag}"`)
+});
